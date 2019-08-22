@@ -2,6 +2,8 @@
 
 import sys
 
+HLT = 0b00000001
+
 class CPU:
     """Main CPU class."""
 
@@ -71,4 +73,10 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        pass
+        while self.running:
+            IR = self.ram[self.pc]
+            if IR == HLT:
+                self.running = False
+
+
+        
