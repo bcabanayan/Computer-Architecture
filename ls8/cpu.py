@@ -3,6 +3,7 @@
 import sys
 
 HLT = 0b00000001
+LDI = 0b10000010
 
 class CPU:
     """Main CPU class."""
@@ -74,9 +75,15 @@ class CPU:
     def run(self):
         """Run the CPU."""
         while self.running:
-            IR = self.ram[self.pc]
-            if IR == HLT:
+            IR = self.ram_read(self.pc)
+            if IR == LDI:
+                MAR = self.ram_read(self.pc + 1)
+                MDR = self.ram_read(self.pc + 2)
+                self.registers[MAR] = MDR
+                self.pc += 3
+            elif IR == HLT:
                 self.running = False
+            
 
 
         
