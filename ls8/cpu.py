@@ -4,6 +4,7 @@ import sys
 
 HLT = 0b00000001
 LDI = 0b10000010
+PRN = 0b01000111
 
 class CPU:
     """Main CPU class."""
@@ -81,6 +82,11 @@ class CPU:
                 MDR = self.ram_read(self.pc + 2)
                 self.registers[MAR] = MDR
                 self.pc += 3
+            elif IR == PRN:
+                MAR = self.ram_read(self.pc + 1)
+                MDR = self.registers[MAR]
+                print(MDR)
+                self.pc += 2
             elif IR == HLT:
                 self.running = False
             
