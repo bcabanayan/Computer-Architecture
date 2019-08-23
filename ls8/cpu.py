@@ -90,6 +90,17 @@ class CPU:
             elif IR == HLT:
                 self.running = False
             
+# example print code
 
+file = open('./examples/print8.ls8')
 
-        
+for line in file:
+    print(line)
+
+file.close()
+
+# example print code, which closes file for us
+
+with open('./examples/print8.ls8') as file:
+    for line in file:
+        print(line)
