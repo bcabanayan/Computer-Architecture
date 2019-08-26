@@ -2,10 +2,6 @@
 
 import sys
 
-HLT = 0b00000001
-LDI = 0b10000010
-PRN = 0b01000111
-
 class CPU:
     """Main CPU class."""
 
@@ -24,20 +20,37 @@ class CPU:
 
     def load(self):
         """Load a program into memory."""
-
+        
         address = 0
+
+        try:
+            with open(sys.argv[1]) as file:
+                for line in file:
+                    # print(line)
+                    comment_split = line.split('#')
+                    possible_number = comment_split[0]
+                    if possible_number == '':
+                        continue
+                    first_bit = possible_number[0]
+                    if first_bit == '1' or first_bit == '0':
+                        instruction = int(possible_number[0:8], base = 2)
+                        self.ram[address] = instruction
+                        address += 1
+        except IOError: #File Not Found Error
+            print('I cannot find that file, check the name')
+            sys.exit(2)
 
         # For now, we've just hardcoded a program:
 
-        program = [
-            # From print8.ls8
-            0b10000010, # LDI R0,8
-            0b00000000,
-            0b00001000,
-            0b01000111, # PRN R0
-            0b00000000,
-            0b00000001, # HLT
-        ]
+        # program = [
+        #     # From print8.ls8
+        #     0b10000010, # LDI R0,8
+        #     0b00000000,
+        #     0b00001000,
+        #     0b01000111, # PRN R0
+        #     0b00000000,
+        #     0b00000001, # HLT
+        # ]
 
         for instruction in program:
             self.ram[address] = instruction
@@ -75,6 +88,12 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
+        
+        HLT = 0b00000001
+        LDI = 0b10000010
+        PRN = 0b01000111
+
+        self.load()
         while self.running:
             IR = self.ram_read(self.pc)
             if IR == LDI:
@@ -92,15 +111,44 @@ class CPU:
             
 # example print code
 
-file = open('./examples/print8.ls8')
+# file = open('./examples/print8.ls8')
 
-for line in file:
-    print(line)
+# for line in file:
+#     print(line)
 
-file.close()
+# file.close()
 
 # example print code, which closes file for us
 
-with open('./examples/print8.ls8') as file:
-    for line in file:
-        print(line)
+# with open('./examples/print8.ls8') as file:
+#     for line in file:
+#         print(line)
+
+# example printing with command line argument
+
+
+# print(sys.argv)
+
+# if len(sys.argv) != 2:
+#     print('use like so: file-01.py filename')
+#     print(sys.stderr)
+#     sys.exit(1)
+
+# IO Error == File Not Found Error
+
+# try:
+#     with open(sys.argv[1]) as file:
+#         for line in file:
+#             # print(line)
+#             comment_split = line.split('#')
+#             possible_number = comment_split[0]
+#             if possible_number == '':
+#                 continue
+#             first_bit = possible_number[0]
+#             if first_bit == '1' or first_bit == '0':
+#                 x = int(possible_number[0:8], base = 2)
+#                 print('{:b}, {:d}'.format(x, x))
+
+# except IOError: #File Not Found Error
+#     print('I cannot find that file, check the name')
+#     sys.exit(2)
