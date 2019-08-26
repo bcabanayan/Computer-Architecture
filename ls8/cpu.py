@@ -88,21 +88,25 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        
+
         HLT = 0b00000001
         LDI = 0b10000010
         PRN = 0b01000111
 
-        self.load()
+        # self.load()
+
         while self.running:
             IR = self.ram_read(self.pc)
+            OP_A = self.ram_read(self.pc + 1)
+            OP_B = self.ram_read(self.pc + 2)
+
             if IR == LDI:
-                MAR = self.ram_read(self.pc + 1)
-                MDR = self.ram_read(self.pc + 2)
+                MAR = OP_A
+                MDR = OP_B
                 self.registers[MAR] = MDR
                 self.pc += 3
             elif IR == PRN:
-                MAR = self.ram_read(self.pc + 1)
+                MAR = OP_A
                 MDR = self.registers[MAR]
                 print(MDR)
                 self.pc += 2
