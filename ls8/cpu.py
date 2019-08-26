@@ -14,10 +14,15 @@ class CPU:
         self.pc = 0
         self.running = True
         self.ops = {
-            HLT: self.op_ldi,
-            LDI: self.op_hlt,
+            HLT: self.op_hlt,
+            LDI: self.op_ldi,
             PRN: self.op_prn
         }
+    
+    def op_ldi(self, OP_A, OP_B):
+        MAR = OP_A
+        MDR = OP_B
+        self.registers[MAR] = MDR
 
     def ram_read(self, MAR):
         return self.ram[MAR]
@@ -105,18 +110,24 @@ class CPU:
 
             OP_SIZE = IR >> 6
 
-            if IR == LDI:
-                MAR = OP_A
-                MDR = OP_B
-                self.registers[MAR] = MDR
-            elif IR == PRN:
-                MAR = OP_A
-                MDR = self.registers[MAR]
-                print(MDR)
-            elif IR == HLT:
-                self.running = False
-            
-            self.pc += OP_SIZE + 1
+            INS_SET = ((IR >> 4) & 0b1) == 1
+
+            # if IR == LDI:
+            #     MAR = OP_A
+            #     MDR = OP_B
+            #     self.registers[MAR] = MDR
+            # elif IR == PRN:
+            #     MAR = OP_A
+            #     MDR = self.registers[MAR]
+            #     print(MDR)
+            # elif IR == HLT:
+            #     self.running = False
+
+            if IR in self.ops:
+                self.ops[IR](OP_A, OP_B)
+
+            if not INS_SET:
+                self.pc += OP_SIZE + 1
             
 # example print code
 
