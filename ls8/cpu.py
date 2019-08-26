@@ -2,9 +2,7 @@
 
 import sys
 
-HLT = 0b00000001
-LDI = 0b10000010
-PRN = 0b01000111
+
 
 class CPU:
     """Main CPU class."""
@@ -15,6 +13,11 @@ class CPU:
         self.registers = [0] * 8
         self.pc = 0
         self.running = True
+        self.ops = {
+            HLT: self.op_ldi,
+            LDI: self.op_hlt,
+            PRN: self.op_prn
+        }
 
     def ram_read(self, MAR):
         return self.ram[MAR]
@@ -38,6 +41,7 @@ class CPU:
                 if first_bit == '1' or first_bit == '0':
                     self.ram[address] = int(instruction[:8], 2)
                     address += 1
+
         # except IOError: #File Not Found Error
         #     print('I cannot find that file, check the name')
         #     sys.exit(2)
