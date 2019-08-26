@@ -2,6 +2,10 @@
 
 import sys
 
+HLT = 0b00000001
+LDI = 0b10000010
+PRN = 0b01000111
+
 class CPU:
     """Main CPU class."""
 
@@ -18,27 +22,25 @@ class CPU:
     def ram_write(self, MAR, MDR):
         self.ram[MAR] = MDR  
 
-    def load(self):
+    def load(self, filename):
         """Load a program into memory."""
         
         address = 0
 
-        try:
-            with open(sys.argv[1]) as file:
-                for line in file:
-                    # print(line)
-                    comment_split = line.split('#')
-                    possible_number = comment_split[0]
-                    if possible_number == '':
-                        continue
-                    first_bit = possible_number[0]
-                    if first_bit == '1' or first_bit == '0':
-                        instruction = int(possible_number[0:8], base = 2)
-                        self.ram[address] = instruction
-                        address += 1
-        except IOError: #File Not Found Error
-            print('I cannot find that file, check the name')
-            sys.exit(2)
+        # try:
+        with open(filename) as file:
+            for line in file:
+                comment_split = line.split('#')
+                instruction = comment_split[0]
+                if instruction == '':
+                    continue
+                first_bit = instruction[0]
+                if first_bit == '1' or first_bit == '0':
+                    self.ram[address] = int(instruction[:8], 2)
+                    address += 1
+        # except IOError: #File Not Found Error
+        #     print('I cannot find that file, check the name')
+        #     sys.exit(2)
 
         # For now, we've just hardcoded a program:
 
@@ -52,9 +54,9 @@ class CPU:
         #     0b00000001, # HLT
         # ]
 
-        for instruction in program:
-            self.ram[address] = instruction
-            address += 1
+        # for instruction in program:
+        #     self.ram[address] = instruction
+        #     address += 1
 
 
     def alu(self, op, reg_a, reg_b):
@@ -88,10 +90,6 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-
-        HLT = 0b00000001
-        LDI = 0b10000010
-        PRN = 0b01000111
 
         # self.load()
 
