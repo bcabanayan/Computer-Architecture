@@ -97,21 +97,24 @@ class CPU:
 
         while self.running:
             IR = self.ram_read(self.pc)
+
             OP_A = self.ram_read(self.pc + 1)
             OP_B = self.ram_read(self.pc + 2)
+
+            OP_SIZE = IR >> 6
 
             if IR == LDI:
                 MAR = OP_A
                 MDR = OP_B
                 self.registers[MAR] = MDR
-                self.pc += 3
             elif IR == PRN:
                 MAR = OP_A
                 MDR = self.registers[MAR]
                 print(MDR)
-                self.pc += 2
             elif IR == HLT:
                 self.running = False
+            
+            self.pc += OP_SIZE + 1
             
 # example print code
 
