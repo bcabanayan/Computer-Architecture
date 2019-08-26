@@ -2,7 +2,10 @@
 
 import sys
 
-
+HLT = 0b00000001
+LDI = 0b10000010
+PRN = 0b01000111
+MUL = 0b10100010
 
 class CPU:
     """Main CPU class."""
@@ -16,13 +19,23 @@ class CPU:
         self.ops = {
             HLT: self.op_hlt,
             LDI: self.op_ldi,
-            PRN: self.op_prn
+            PRN: self.op_prn,
+            MUL: self.op_mul
         }
     
     def op_ldi(self, OP_A, OP_B):
         MAR = OP_A
         MDR = OP_B
         self.registers[MAR] = MDR
+
+    def op_prn(self, OP_A, OP_B):
+        print(self.registers[OP_A])
+
+    def op_hlt(self, OP_A, OP_B):
+        self.running = False
+
+    def op_mul(self, OP_A, OP_B):
+        self.alu('MUL', OP_A, OP_B)
 
     def ram_read(self, MAR):
         return self.ram[MAR]
@@ -72,8 +85,9 @@ class CPU:
         """ALU operations."""
 
         if op == "ADD":
-            self.reg[reg_a] += self.reg[reg_b]
-        #elif op == "SUB": etc
+            self.registers[reg_a] += self.registers[reg_b]
+        elif op == "MUL":
+            self.registers[reg_a] *= self.registers[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
 
