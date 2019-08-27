@@ -6,6 +6,8 @@ HLT = 0b00000001
 LDI = 0b10000010
 PRN = 0b01000111
 MUL = 0b10100010
+PUSH = 0b01000101
+POP = 0b01000110
 
 class CPU:
     """Main CPU class."""
@@ -20,7 +22,9 @@ class CPU:
             HLT: self.op_hlt,
             LDI: self.op_ldi,
             PRN: self.op_prn,
-            MUL: self.op_mul
+            MUL: self.op_mul,
+            PUSH = self.op_push,
+            POP = self.op_pop
         }
         # stack pointer set to starting point in ram
         self.registers[7] = 0xF3
@@ -39,6 +43,11 @@ class CPU:
 
     def op_mul(self, OP_A, OP_B):
         self.alu('MUL', OP_A, OP_B)
+
+    def op_push(self, OP_A, OP_B):
+        self.registers[7] -= 1
+        self.sp = registers[7]
+        ram[self.sp] = registers[OP_A]
 
     def ram_read(self, MAR):
         return self.ram[MAR]
