@@ -22,6 +22,9 @@ class CPU:
             PRN: self.op_prn,
             MUL: self.op_mul
         }
+        # stack pointer set to starting point in ram
+        self.registers[7] = 0xF3
+        self.sp = self.registers[7]
 
     def op_hlt(self, OP_A, OP_B):
         self.running = False
@@ -107,7 +110,7 @@ class CPU:
         ), end='')
 
         for i in range(8):
-            print(" %02X" % self.reg[i], end='')
+            print(" %02X" % self.registers[i], end='')
 
         print()
 
@@ -115,6 +118,8 @@ class CPU:
         """Run the CPU."""
 
         # self.load()
+
+        print(self.registers[7])
 
         while self.running:
             IR = self.ram_read(self.pc)
