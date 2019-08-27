@@ -22,6 +22,9 @@ class CPU:
             PRN: self.op_prn,
             MUL: self.op_mul
         }
+
+    def op_hlt(self, OP_A, OP_B):
+        self.running = False
     
     def op_ldi(self, OP_A, OP_B):
         MAR = OP_A
@@ -30,9 +33,6 @@ class CPU:
 
     def op_prn(self, OP_A, OP_B):
         print(self.registers[OP_A])
-
-    def op_hlt(self, OP_A, OP_B):
-        self.running = False
 
     def op_mul(self, OP_A, OP_B):
         self.alu('MUL', OP_A, OP_B)

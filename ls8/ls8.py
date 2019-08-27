@@ -7,7 +7,7 @@ from cpu import *
 
 if len(sys.argv) == 2:
     cpu = CPU()
-    cpu.load()
+    cpu.load(sys.argv[1])
     cpu.run()
 else:
     print('Error: please provide filename to execute instructions')
