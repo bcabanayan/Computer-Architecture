@@ -23,8 +23,8 @@ class CPU:
             LDI: self.op_ldi,
             PRN: self.op_prn,
             MUL: self.op_mul,
-            PUSH = self.op_push,
-            POP = self.op_pop
+            PUSH: self.op_push,
+            POP: self.op_pop
         }
         # stack pointer set to starting point in ram
         self.registers[7] = 0xF3
@@ -46,8 +46,15 @@ class CPU:
 
     def op_push(self, OP_A, OP_B):
         self.registers[7] -= 1
-        self.sp = registers[7]
-        ram[self.sp] = registers[OP_A]
+        self.sp = self.registers[7]
+        value_to_push = self.registers[OP_A]
+        self.ram[self.sp] = value_to_push
+
+    def op_pop(self, OP_A, OP_B):
+        value_to_pop = self.ram[self.sp]
+        self.registers[OP_A] = value_to_pop
+        self.registers[7] += 1
+        self.sp = self.registers[7]
 
     def ram_read(self, MAR):
         return self.ram[MAR]
