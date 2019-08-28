@@ -45,15 +45,15 @@ class CPU:
         self.alu('MUL', OP_A, OP_B)
 
     def op_push(self, OP_A, OP_B):
-        self.registers[7] -= 1
+        self.registers[7] = (self.sp - 1) % 255
         self.sp = self.registers[7]
         value_to_push = self.registers[OP_A]
-        self.ram[self.sp] = value_to_push
+        self.ram_write(self.sp, value_to_push)
 
     def op_pop(self, OP_A, OP_B):
-        value_to_pop = self.ram[self.sp]
+        value_to_pop = self.ram_read(self.sp)
         self.registers[OP_A] = value_to_pop
-        self.registers[7] += 1
+        self.registers[7] = (self.sp + 1) % 255
         self.sp = self.registers[7]
 
     def ram_read(self, MAR):
@@ -134,8 +134,6 @@ class CPU:
         """Run the CPU."""
 
         # self.load()
-
-        print(self.registers[7])
 
         while self.running:
             IR = self.ram_read(self.pc)
