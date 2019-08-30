@@ -11,6 +11,7 @@ POP = 0b01000110
 CALL = 0b01010000
 RET = 0b00010001
 ADD = 0b10100000
+JMP = 0b01010100
 
 class CPU:
     """Main CPU class."""
@@ -30,7 +31,8 @@ class CPU:
             POP: self.op_pop,
             CALL: self.op_call,
             ADD: self.op_add,
-            RET: self.op_ret
+            RET: self.op_ret,
+            JMP: self.op_jmp
         }
         # stack pointer set to starting point in ram
         self.registers[7] = 0xF3
@@ -84,6 +86,11 @@ class CPU:
         self.registers[7] = (self.registers[7] + 1) % 255
 
         self.pc = address_to_return_to
+
+    def op_jmp(self, OP_A, OP_B):
+        address_to_jump_to = self.registers[OP_A]
+        # set pc to address to jump to
+        self.pc = address_to_jump_to
 
     def ram_read(self, MAR):
         return self.ram[MAR]
