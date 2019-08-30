@@ -8,6 +8,9 @@ PRN = 0b01000111
 MUL = 0b10100010
 PUSH = 0b01000101
 POP = 0b01000110
+CALL = 0b01010000
+RET = 0b00010001
+ADD = 0b10100000
 
 class CPU:
     """Main CPU class."""
@@ -24,7 +27,10 @@ class CPU:
             PRN: self.op_prn,
             MUL: self.op_mul,
             PUSH: self.op_push,
-            POP: self.op_pop
+            POP: self.op_pop,
+            CALL: self.op_call,
+            ADD: self.op_add,
+            RET: self.op_ret
         }
         # stack pointer set to starting point in ram
         self.registers[7] = 0xF3
@@ -43,18 +49,41 @@ class CPU:
 
     def op_mul(self, OP_A, OP_B):
         self.alu('MUL', OP_A, OP_B)
+    
+    def op_add(self, OP_A, OP_B):
+        self.alu('ADD', OP_A, OP_B)
 
     def op_push(self, OP_A, OP_B):
         self.registers[7] = (self.sp - 1) % 255
         self.sp = self.registers[7]
+
         value_to_push = self.registers[OP_A]
+
         self.ram_write(self.sp, value_to_push)
 
     def op_pop(self, OP_A, OP_B):
         value_to_pop = self.ram_read(self.sp)
+
         self.registers[OP_A] = value_to_pop
+
         self.registers[7] = (self.sp + 1) % 255
         self.sp = self.registers[7]
+
+    def op_call(self, OP_A, OP_B):
+        address_to_jump_to = self.registers[OP_A]
+        # store address of the next instruction
+        next_instruction_address = self.pc + 2
+        self.registers[7] = (self.registers[7] - 1) % 255
+        self.ram_write(self.sp, next_instruction_address)
+        # set pc to address to jump to
+        self.pc = address_to_jump_to
+
+    def op_ret(self, OP_A, OP_B):
+        address_to_return_to = self.ram_read(self.sp)
+
+        self.registers[7] = (self.registers[7] + 1) % 255
+
+        self.pc = address_to_return_to
 
     def ram_read(self, MAR):
         return self.ram[MAR]
@@ -205,3 +234,10 @@ class CPU:
 # except IOError: #File Not Found Error
 #     print('I cannot find that file, check the name')
 #     sys.exit(2)
+
+# 5 SAVE
+# 2 into R2
+# 99
+
+# 7 PUSH
+# 2 from R2
