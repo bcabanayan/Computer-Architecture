@@ -14,6 +14,7 @@ ADD = 0b10100000
 JMP = 0b01010100
 CMP = 0b10100111
 JEQ = 0b01010101
+JNE = 0b01010110
 
 class CPU:
     """Main CPU class."""
@@ -36,7 +37,8 @@ class CPU:
             RET: self.op_ret,
             JMP: self.op_jmp,
             CMP: self.op_cmp,
-            JEQ: self.op_jeq
+            JEQ: self.op_jeq,
+            JNE: self.op_jne
         }
         # stack pointer set to starting point in ram
         self.registers[7] = 0xF3
@@ -100,11 +102,21 @@ class CPU:
         self.pc = address_to_jump_to
 
     def op_cmp(self, OP_A, OP_B):
-        self.alu('CMP', OP_A, OP_B)
-    
+        self.alu('CMP', OP_A, OP_B)            
+
     def op_jeq(self, OP_A, OP_B):
-        if self.E:
-            self.op_jmp(OP_A, None)
+        if self.E == 1:
+            address_to_jump_to = self.registers[OP_A]
+            self.pc = address_to_jump_to
+        else:
+            self.pc += 2
+
+    def op_jne(self, OP_A, OP_B):
+        if self.E == 0:
+            address_to_jump_to = self.registers[OP_A]
+            self.pc = address_to_jump_to
+        else:
+            self.pc += 2
 
     def ram_read(self, MAR):
         return self.ram[MAR]
