@@ -12,6 +12,7 @@ CALL = 0b01010000
 RET = 0b00010001
 ADD = 0b10100000
 JMP = 0b01010100
+CMP = 0b10100111
 
 class CPU:
     """Main CPU class."""
@@ -32,11 +33,16 @@ class CPU:
             CALL: self.op_call,
             ADD: self.op_add,
             RET: self.op_ret,
-            JMP: self.op_jmp
+            JMP: self.op_jmp,
+            CMP: self.op_cmp
         }
         # stack pointer set to starting point in ram
         self.registers[7] = 0xF3
         self.sp = self.registers[7]
+        # equal, less than, greater than flags
+        self.E = 0
+        self.L = 0
+        self.G = 0
 
     def op_hlt(self, OP_A, OP_B):
         self.running = False
@@ -91,6 +97,9 @@ class CPU:
         address_to_jump_to = self.registers[OP_A]
         # set pc to address to jump to
         self.pc = address_to_jump_to
+
+    def op_cmp(self, OP_A, OP_B):
+        self.alu('CMP', OP_A, OP_B)
 
     def ram_read(self, MAR):
         return self.ram[MAR]
