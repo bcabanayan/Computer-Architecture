@@ -95,7 +95,6 @@ class CPU:
 
     def op_jmp(self, OP_A, OP_B):
         address_to_jump_to = self.registers[OP_A]
-        # set pc to address to jump to
         self.pc = address_to_jump_to
 
     def op_cmp(self, OP_A, OP_B):
@@ -191,8 +190,6 @@ class CPU:
     def run(self):
         """Run the CPU."""
 
-        # self.load()
-
         while self.running:
             IR = self.ram_read(self.pc)
 
@@ -203,70 +200,8 @@ class CPU:
 
             INS_SET = ((IR >> 4) & 0b1) == 1
 
-            # if IR == LDI:
-            #     MAR = OP_A
-            #     MDR = OP_B
-            #     self.registers[MAR] = MDR
-            # elif IR == PRN:
-            #     MAR = OP_A
-            #     MDR = self.registers[MAR]
-            #     print(MDR)
-            # elif IR == HLT:
-            #     self.running = False
-
             if IR in self.ops:
                 self.ops[IR](OP_A, OP_B)
 
             if not INS_SET:
                 self.pc += OP_SIZE + 1
-            
-# example print code
-
-# file = open('./examples/print8.ls8')
-
-# for line in file:
-#     print(line)
-
-# file.close()
-
-# example print code, which closes file for us
-
-# with open('./examples/print8.ls8') as file:
-#     for line in file:
-#         print(line)
-
-# example printing with command line argument
-
-
-# print(sys.argv)
-
-# if len(sys.argv) != 2:
-#     print('use like so: file-01.py filename')
-#     print(sys.stderr)
-#     sys.exit(1)
-
-# IO Error == File Not Found Error
-
-# try:
-#     with open(sys.argv[1]) as file:
-#         for line in file:
-#             # print(line)
-#             comment_split = line.split('#')
-#             possible_number = comment_split[0]
-#             if possible_number == '':
-#                 continue
-#             first_bit = possible_number[0]
-#             if first_bit == '1' or first_bit == '0':
-#                 x = int(possible_number[0:8], base = 2)
-#                 print('{:b}, {:d}'.format(x, x))
-
-# except IOError: #File Not Found Error
-#     print('I cannot find that file, check the name')
-#     sys.exit(2)
-
-# 5 SAVE
-# 2 into R2
-# 99
-
-# 7 PUSH
-# 2 from R2
